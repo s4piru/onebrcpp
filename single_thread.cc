@@ -9,6 +9,7 @@
 #include <limits>
 #include <map>
 #include <string>
+#include <string_view>
 
 struct Stats {
   double min = std::numeric_limits<double>::infinity();
@@ -37,10 +38,10 @@ double ParseDouble(const char** p) {
   return negative ? -result : result;
 }
 
-std::pair<std::string, double> ParseLine(const char** p) {
+std::pair<std::string_view, double> ParseLine(const char** p) {
   const char* start = *p;
   while (**p != ';') ++(*p);
-  std::string name(start, *p - start);
+  std::string_view name(start, *p - start);
   assert(**p == ';');
   ++(*p);
   double temp = ParseDouble(p);
@@ -58,20 +59,21 @@ int main(int argc, char* argv[]) {
   const char* data =
       static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
-  std::map<std::string, Stats> ma;
+  std::map<std::string, Stats, std::less<>> ma;
   const char* p = data;
   const char* end = data + sb.st_size;
   while (p < end) {
     auto [name, tmp] = ParseLine(&p);
-    Stats& st = ma[name];
+    auto it = ma.find(name);
+    if (it == ma.end()) {
+      it = ma.emplace(std::string(name), Stats{}).first;
+    }
+    Stats& st = it->second;
     st.min = std::min(st.min, tmp);
     st.max = std::max(st.max, tmp);
     st.sum += tmp;
     ++st.count;
   }
-
-  munmap(const_cast<char*>(data), sb.st_size);
-  close(fd);
 
   std::cout << std::fixed << std::setprecision(1);
   std::cout << "{";
@@ -85,6 +87,9 @@ int main(int argc, char* argv[]) {
     std::cout << name << "=" << st.min << "/" << mean << "/" << st.max;
   }
   std::cout << "}" << std::endl;
+
+  munmap(const_cast<char*>(data), sb.st_size);
+  close(fd);
 
   return 0;
 }
