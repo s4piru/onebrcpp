@@ -20,6 +20,12 @@ struct StringHash {
   }
 };
 
+struct AlwaysEqual {
+  using is_transparent = void;
+  template <typename T, typename U>
+  bool operator()(const T&, const U&) const { return true; }
+};
+
 struct Stats {
   double min = std::numeric_limits<double>::infinity();
   double max = -std::numeric_limits<double>::infinity();
@@ -68,7 +74,7 @@ int main(int argc, char* argv[]) {
   const char* data =
       static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
-  std::unordered_map<std::string, Stats, StringHash, std::equal_to<>> ma;
+  std::unordered_map<std::string, Stats, StringHash, AlwaysEqual> ma;
   const char* p = data;
   const char* end = data + sb.st_size;
   while (p < end) {
