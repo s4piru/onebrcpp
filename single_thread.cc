@@ -7,9 +7,18 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include <map>
+#include <algorithm>
 #include <string>
 #include <string_view>
+#include <unordered_map>
+#include <vector>
+
+struct StringHash {
+  using is_transparent = void;
+  size_t operator()(std::string_view sv) const {
+    return std::hash<std::string_view>{}(sv);
+  }
+};
 
 struct Stats {
   double min = std::numeric_limits<double>::infinity();
@@ -42,10 +51,10 @@ std::pair<std::string_view, double> ParseLine(const char** p) {
   const char* start = *p;
   while (**p != ';') ++(*p);
   std::string_view name(start, *p - start);
-  assert(**p == ';');
+  // assert(**p == ';');
   ++(*p);
   double temp = ParseDouble(p);
-  assert(**p == '\n');
+  // assert(**p == '\n');
   ++(*p);
   return {name, temp};
 }
@@ -59,7 +68,7 @@ int main(int argc, char* argv[]) {
   const char* data =
       static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
 
-  std::map<std::string, Stats, std::less<>> ma;
+  std::unordered_map<std::string, Stats, StringHash, std::equal_to<>> ma;
   const char* p = data;
   const char* end = data + sb.st_size;
   while (p < end) {
@@ -75,10 +84,18 @@ int main(int argc, char* argv[]) {
     ++st.count;
   }
 
+  std::vector<std::string> keys;
+  keys.reserve(ma.size());
+  for (const auto& [name, _] : ma) {
+    keys.push_back(name);
+  }
+  std::sort(keys.begin(), keys.end());
+
   std::cout << std::fixed << std::setprecision(1);
   std::cout << "{";
   bool first = true;
-  for (const auto& [name, st] : ma) {
+  for (const auto& name : keys) {
+    const Stats& st = ma[name];
     if (!first) {
       std::cout << ", ";
     }
