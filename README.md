@@ -1,3 +1,10 @@
+## Init git submodule
+
+```
+git submodule update --init --recursive
+```
+
+
 ## Run profiler
 
 ```
