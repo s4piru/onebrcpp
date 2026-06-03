@@ -12,18 +12,20 @@
 
 ## Environment
 
-- The optimized implementations use Unix-specific APIs. So the code is intended for Linux or macOS. Tested on Apple M2 Pro with 32 GB Memory.
+- The optimized implementations use Unix-specific APIs. So the code is intended for Linux or macOS.
+- Tested on Apple M2 Pro with 32 GB Memory.
 - clang++ (for C++20) and Java for generate_input.sh
 
 
-## Setup
+## Setup & Run
+
 ### Get the original 1BRC repository
 
 ```
 git submodule update --init --recursive
 ```
 
-## Generate Input Data
+### Generate Input Data
 
 ```bash
 ./generate_input.sh
@@ -41,7 +43,7 @@ git submodule update --init --recursive
 - user time: CPU time spent in user-space code
 - sys time: CPU time spent in kernel/system calls
 
-## Profiler (MacOS)
+### Profiler (MacOS)
 
 ```
 brew install samply
