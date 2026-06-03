@@ -151,6 +151,7 @@ int main(int argc, char* argv[]) {
   fstat(fd, &sb);
   const char* data =
       static_cast<const char*>(mmap(nullptr, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0));
+  madvise(const_cast<char*>(data), sb.st_size, MADV_SEQUENTIAL);
 
   // Create as many futures as the number of cores.
   unsigned int num_threads = std::thread::hardware_concurrency();
