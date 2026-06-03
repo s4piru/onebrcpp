@@ -4,3 +4,5 @@ single_thread
 multi_thread
 expected_output.txt
 measurements.txt
+.DS_Store
+1brc_report.md
