@@ -1,6 +1,6 @@
 # 1BRC C++ Implementation
 
-## File Overview
+## Repository Structure
 
 - generate_input.sh: Generates a input file(measurements.txt) and expected output(expected_output.txt).
 - baseline.cc: Simplest implementation.
