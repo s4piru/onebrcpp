@@ -3,6 +3,9 @@ baseline
 single_thread
 multi_thread
 expected_output.txt
-measurements.txt
+measurements*
 .DS_Store
 1brc_report.md
+*dSYM
+profile*
+screenshots/
