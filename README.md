@@ -1,5 +1,7 @@
 # 1BRC C++ implementation report
 
+This repository contains my C++ implementation of the [1 Billion Row Challenge](https://1brc.dev/).
+
 ## Summary
 
 The problem is to write a program that processes a very large number of station-temperature pairs and calculates the minimum, maximum, and average temperature for each station as fast as possible.
